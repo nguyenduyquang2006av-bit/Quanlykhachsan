@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giao diện khách sạn - Trang chủ và Dịch vụ</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#222;font-family:Arial,Helvetica,sans-serif;font-size:13px}
+.topbar{height:58px;border-bottom:1px solid #e7e7e7;display:flex;align-items:center;padding:0 4.5%;gap:38px}
+.logo{font-size:17px;font-weight:bold;letter-spacing:.5px;white-space:nowrap}
+.menu{height:100%;display:flex;align-items:center;gap:27px;flex:1}
+.menu a{height:100%;display:flex;align-items:center;text-decoration:none;color:#555;font-size:12px;white-space:nowrap;border-bottom:2px solid transparent;padding-top:2px}
+.menu a:hover,.menu a.active{color:#111;border-bottom-color:#555}
+.account{font-size:12px;color:#555;white-space:nowrap}
+.page{display:none;width:min(1120px,92%);margin:34px auto 60px}
+.page.active{display:block}
+h1{font-size:22px;margin:0 0 22px;font-weight:600}
+.home-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:26px}
+.summary{border:1px solid #dedede;min-height:94px;padding:16px 18px}
+.summary .name{font-size:13px;color:#444;margin-bottom:15px}
+.summary .value{font-size:20px;font-weight:600}
+.home-bottom{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.panel{border:1px solid #dedede;padding:16px;min-height:190px}
+.panel-title{font-weight:600;font-size:14px;margin:0 0 16px}
+.room-list{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.room{border:1px solid #ddd;padding:12px 6px;text-align:center;color:#555;font-size:12px}
+.room.free{background:#fafafa}.room.used{background:#ededed}
+.legend{margin-top:14px;color:#777;font-size:11px;display:flex;gap:18px}
+.legend span:before{content:"";display:inline-block;width:8px;height:8px;border:1px solid #aaa;margin-right:5px}
+.info-row{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:10px 2px;color:#555;font-size:12px}
+.info-row:last-child{border:0}
+.service-tools{display:flex;align-items:center;justify-content:space-between;margin:0 0 15px;gap:12px}
+.search{width:290px;max-width:65%;height:32px;border:1px solid #d8d8d8;padding:0 10px;font-size:12px;outline:none}
+.search:focus{border-color:#888}
+.add{height:32px;border:1px solid #ccc;background:#f7f7f7;padding:0 13px;font-size:12px;color:#333;cursor:pointer}
+.add:hover{background:#eee}
+table{width:100%;border-collapse:collapse;border:1px solid #ddd}
+th,td{border:1px solid #ddd;padding:12px 13px;text-align:left;font-size:12px}
+th{background:#f1f1f1;font-weight:600;color:#333}
+td{color:#555;height:39px}
+.table-bottom{display:flex;justify-content:flex-end;margin-top:18px}
+.small-btn{border:1px solid #ccc;background:#f7f7f7;padding:7px 13px;font-size:11px;cursor:pointer}
+.status{color:#555}
+.overlay{position:fixed;inset:0;background:#0005;display:none;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.dialog{background:#fff;border:1px solid #ccc;width:350px;padding:20px}
+.dialog h2{font-size:16px;margin:0 0 16px}
+.dialog label{display:block;font-size:12px;margin:12px 0 5px}
+.dialog input{width:100%;height:31px;border:1px solid #ccc;padding:6px}
+.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+@media(max-width:750px){.topbar{height:auto;align-items:flex-start;flex-direction:column;padding:15px 4%;gap:12px}.menu{height:auto;flex-wrap:wrap;gap:14px}.menu a{height:28px}.home-cards{grid-template-columns:1fr}.home-bottom{grid-template-columns:1fr}.page{margin-top:25px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">HOTEL</div>
+  <nav class="menu">
+    <a href="#" data-page="home" class="active">Trang chủ</a>
+    <a href="#">Phòng</a>
+    <a href="#">Đặt phòng</a>
+    <a href="#">Khách hàng</a>
+    <a href="#" data-page="services">Dịch vụ</a>
+    <a href="#">Nhân viên</a>
+    <a href="#">Tài khoản</a>
+    <a href="#">Thống kê</a>
+  </nav>
+  <div class="account">Tài khoản</div>
+</header>
+
+<!-- MÀN HÌNH TRANG CHỦ -->
+<main id="home" class="page active">
+  <h1>Trang chủ</h1>
+  <div class="home-cards">
+    <div class="summary"><div class="name">Tổng số phòng</div><div class="value">40</div></div>
+    <div class="summary"><div class="name">Phòng trống</div><div class="value">18</div></div>
+    <div class="summary"><div class="name">Phòng đang sử dụng</div><div class="value">22</div></div>
+  </div>
+  <div class="home-bottom">
+    <section class="panel">
+      <h2 class="panel-title">Sơ đồ trạng thái phòng</h2>
+      <div class="room-list">
+        <div class="room free">Phòng 101</div><div class="room used">Phòng 102</div><div class="room free">Phòng 103</div>
+        <div class="room used">Phòng 104</div><div class="room free">Phòng 105</div><div class="room free">Phòng 106</div>
+      </div>
+      <div class="legend"><span>Phòng trống</span><span>Đang sử dụng</span></div>
+    </section>
+    <section class="panel">
+      <h2 class="panel-title">Đặt phòng gần đây</h2>
+      <div class="info-row"><span>Phòng 101 - Nguyễn Văn A</span><b>--</b></div>
+      <div class="info-row"><span>Phòng 205 - Trần Thị B</span><b>--</b></div>
+      <div class="info-row"><span>Phòng 302 - Lê Hoàng C</span><b>--</b></div>
+  
+    </section>
+  </div>
+</main>
+
+<!-- MÀN HÌNH DỊCH VỤ -->
+<main id="services" class="page">
+  <h1>Dịch vụ</h1>
+  <div class="service-tools">
+    <input class="search" id="search" type="text" placeholder="Tìm dịch vụ..." oninput="filterRows()">
+    <button class="add" onclick="openDialog()">+ Thêm dịch vụ</button>
+  </div>
+  <table>
+    <thead><tr><th> Dịch vụ</th><th>Đơn giá</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+    <tbody id="serviceRows">
+      <tr><td>Giặt ủi</td><td> 15.000 </td><td class="status">Đang hoạt động</td><td><button class="small-btn" onclick="editRow(this)">Sửa</button></td></tr>
+      <tr><td>Ăn sáng</td><td>50.000</td><td class="status">Đang hoạt động</td><td><button class="small-btn" onclick="editRow(this)">Sửa</button></td></tr>
+      <tr><td>Đưa đón sân bay</td><td>100.000</td><td class="status">Đang hoạt động</td><td><button class="small-btn" onclick="editRow(this)">Sửa</button></td></tr>
+    </tbody>
+  </table>
+  <div class="table-bottom"><button class="small-btn" onclick="document.getElementById('search').value='';filterRows()">Làm mới</button></div>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="dialog">
+    <h2 id="dialogTitle">Thêm dịch vụ</h2>
+    <label for="serviceName">Tên dịch vụ</label><input id="serviceName" type="text">
+    <label for="serviceType">Loại dịch vụ</label><input id="serviceType" type="text">
+    <div class="dialog-actions">
+      <button class="small-btn" onclick="closeDialog()">Hủy</button>
+      <button class="small-btn" onclick="saveService()">Lưu</button>
+    </div>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.menu a[data-page]').forEach(link=>{
+  link.addEventListener('click',e=>{
+    e.preventDefault();
+    const id=link.dataset.page;
+    document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));
+    document.querySelectorAll('.menu a').forEach(a=>a.classList.toggle('active',a===link));
+  });
+});
+function filterRows(){
+  const q=document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('#serviceRows tr').forEach(row=>{
+    row.style.display=row.innerText.toLowerCase().includes(q)?'':'none';
+  });
+}
+let editing=null;
+function openDialog(){editing=null;document.getElementById('dialogTitle').textContent='Thêm dịch vụ';document.getElementById('serviceName').value='';document.getElementById('serviceType').value='';document.getElementById('overlay').classList.add('show')}
+function editRow(button){
+  editing=button.closest('tr');
+  document.getElementById('dialogTitle').textContent='Sửa dịch vụ';
+  document.getElementById('serviceName').value=editing.cells[0].innerText;
+  document.getElementById('serviceType').value=editing.cells[1].innerText;
+  document.getElementById('overlay').classList.add('show');
+}
+function closeDialog(){document.getElementById('overlay').classList.remove('show')}
+function saveService(){
+  const name=document.getElementById('serviceName').value.trim();
+  const type=document.getElementById('serviceType').value.trim();
+  if(!name||!type){alert('Vui lòng nhập đầy đủ thông tin.');return}
+  if(editing){editing.cells[0].innerText=name;editing.cells[1].innerText=type}
+  else{
+    const row=document.getElementById('serviceRows').insertRow();
+    row.innerHTML=`<td></td><td></td><td class="status">Đang hoạt động</td><td><button class="small-btn" onclick="editRow(this)">Sửa</button></td>`;
+    row.cells[0].innerText=name;row.cells[1].innerText=type;
+  }
+  closeDialog();filterRows();
+}
+</script>
+</body>
+</html>
