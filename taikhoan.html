@@ -1,0 +1,682 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOTEL - Quản lý tài khoản</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    font-size: 13px;
+}
+
+/* THANH MENU */
+
+header {
+    height: 48px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3%;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #666;
+    font-size: 11px;
+    padding: 15px 0;
+}
+
+nav a:hover,
+nav a.active {
+    color: #222;
+    border-bottom: 2px solid #333;
+}
+
+/* NỘI DUNG */
+
+.container {
+    width: 90%;
+    max-width: 1100px;
+    min-height: 380px;
+    background: white;
+    margin: 0 auto;
+    padding: 25px 5.5%;
+}
+
+.top-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h2 {
+    font-size: 18px;
+    margin: 0 0 20px;
+}
+
+.note {
+    font-size: 10px;
+    color: #888;
+}
+
+/* TÌM KIẾM */
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 20px;
+    gap: 15px;
+}
+
+.search {
+    width: 40%;
+    height: 35px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.search:focus {
+    border-color: #777;
+}
+
+button {
+    background: #e5e5e5;
+    border: 1px solid #ccc;
+    padding: 9px 18px;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+button:hover {
+    background: #d5d5d5;
+}
+
+/* BẢNG TÀI KHOẢN */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+
+thead {
+    background: #f1f1f1;
+}
+
+th {
+    text-align: left;
+    font-weight: normal;
+    font-size: 11px;
+    padding: 12px;
+}
+
+td {
+    padding: 14px 12px;
+    border-top: 1px solid #ddd;
+    font-size: 11px;
+}
+
+tbody tr:hover {
+    background: #fafafa;
+}
+
+.action {
+    display: flex;
+    gap: 12px;
+}
+
+.action button {
+    border: none;
+    background: none;
+    padding: 2px;
+    color: #666;
+    cursor: pointer;
+}
+
+.action button:hover {
+    text-decoration: underline;
+}
+
+.status {
+    color: #555;
+}
+
+.status.locked {
+    color: #999;
+}
+
+/* FORM TẠO / SỬA TÀI KHOẢN */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.modal-content {
+    width: 400px;
+    max-width: 100%;
+    background: white;
+    padding: 25px;
+    border: 1px solid #ccc;
+}
+
+.modal-content h3 {
+    font-size: 16px;
+    margin: 0 0 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 12px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    height: 35px;
+    border: 1px solid #ccc;
+    padding: 7px;
+    background: white;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.empty {
+    text-align: center;
+    color: #888;
+    padding: 25px;
+}
+
+@media(max-width: 700px) {
+    header {
+        height: auto;
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .container {
+        width: 96%;
+        padding: 20px 12px;
+    }
+
+    .toolbar {
+        flex-wrap: wrap;
+    }
+
+    .search {
+        width: 100%;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 600px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- THANH ĐIỀU HƯỚNG -->
+
+<header>
+
+    <div class="logo">HOTEL</div>
+
+    <nav>
+        <a href="index.html">Trang chủ</a>
+        <a href="#">Phòng</a>
+        <a href="#">Đặt phòng</a>
+        <a href="#">Khách hàng</a>
+        <a href="#">Dịch vụ</a>
+        <a href="#">Trả phòng</a>
+        <a href="thongke.html">Thống kê</a>
+        <a href="taikhoan.html" class="active">Tài khoản</a>
+    </nav>
+
+</header>
+
+
+<!-- NỘI DUNG TÀI KHOẢN -->
+
+<main class="container">
+
+    <div class="top-title">
+
+        <h2>Tài khoản</h2>
+
+        <span class="note">BẢN PHÁC THẢO</span>
+
+    </div>
+
+
+    <!-- TÌM KIẾM VÀ TẠO TÀI KHOẢN -->
+
+    <div class="toolbar">
+
+        <input
+            type="text"
+            class="search"
+            id="searchInput"
+            placeholder="Tìm tài khoản..."
+            oninput="searchAccount()"
+        >
+
+        <button onclick="openModal()">
+            + Tạo tài khoản
+        </button>
+
+    </div>
+
+
+    <!-- DANH SÁCH TÀI KHOẢN -->
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Tên đăng nhập</th>
+                    <th>Vai trò</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="accountList">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<!-- FORM TẠO VÀ SỬA TÀI KHOẢN -->
+
+<div class="modal" id="accountModal">
+
+    <div class="modal-content">
+
+        <h3 id="modalTitle">Tạo tài khoản</h3>
+
+        <form id="accountForm">
+
+            <div class="form-group">
+
+                <label>Tên đăng nhập</label>
+
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Nhập tên đăng nhập"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Vai trò</label>
+
+                <select id="role" required>
+
+                    <option value="">Chọn vai trò</option>
+                    <option value="Quản lý">Quản lý</option>
+                    <option value="Nhân viên">Nhân viên</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Trạng thái</label>
+
+                <select id="status">
+
+                    <option value="Hoạt động">Hoạt động</option>
+                    <option value="Đã khóa">Đã khóa</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button type="button" onclick="closeModal()">
+                    Hủy
+                </button>
+
+                <button type="submit">
+                    Lưu tài khoản
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+// DỮ LIỆU TÀI KHOẢN MẪU
+
+let accounts = JSON.parse(
+    localStorage.getItem("hotelAccounts")
+) || [
+    {
+        username: "admin",
+        role: "Quản lý",
+        status: "Hoạt động"
+    },
+    {
+        username: "nhanvien01",
+        role: "Nhân viên",
+        status: "Hoạt động"
+    },
+    {
+        username: "nhanvien02",
+        role: "Nhân viên",
+        status: "Đã khóa"
+    }
+];
+
+let editIndex = -1;
+
+
+// HIỂN THỊ DANH SÁCH
+
+function displayAccounts(data = accounts) {
+
+    const list = document.getElementById("accountList");
+
+    list.innerHTML = "";
+
+    if (data.length === 0) {
+
+        list.innerHTML = `
+            <tr>
+                <td colspan="4" class="empty">
+                    Không tìm thấy tài khoản
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    data.forEach((account) => {
+
+        const index = accounts.indexOf(account);
+
+        list.innerHTML += `
+            <tr>
+
+                <td>${escapeHTML(account.username)}</td>
+
+                <td>${escapeHTML(account.role)}</td>
+
+                <td class="${account.status === 'Đã khóa' ? 'status locked' : 'status'}">
+                    ${escapeHTML(account.status)}
+                </td>
+
+                <td>
+                    <div class="action">
+
+                        <button onclick="viewAccount(${index})">
+                            Xem
+                        </button>
+
+                        <button onclick="editAccount(${index})">
+                            Sửa
+                        </button>
+
+                    </div>
+                </td>
+
+            </tr>
+        `;
+
+    });
+
+}
+
+
+// HIỂN THỊ FORM TẠO
+
+function openModal() {
+
+    editIndex = -1;
+
+    document.getElementById("modalTitle").innerText =
+        "Tạo tài khoản";
+
+    document.getElementById("accountForm").reset();
+
+    document.getElementById("accountModal").style.display =
+        "flex";
+
+}
+
+
+// ĐÓNG FORM
+
+function closeModal() {
+
+    document.getElementById("accountModal").style.display =
+        "none";
+
+}
+
+
+// TẠO HOẶC CẬP NHẬT TÀI KHOẢN
+
+document.getElementById("accountForm").onsubmit = function(e) {
+
+    e.preventDefault();
+
+    const username =
+        document.getElementById("username").value.trim();
+
+    const role =
+        document.getElementById("role").value;
+
+    const status =
+        document.getElementById("status").value;
+
+    if (!username) {
+        alert("Vui lòng nhập tên đăng nhập!");
+        return;
+    }
+
+    const duplicate = accounts.some((account, index) =>
+        account.username.toLowerCase() === username.toLowerCase()
+        && index !== editIndex
+    );
+
+    if (duplicate) {
+        alert("Tên đăng nhập đã tồn tại!");
+        return;
+    }
+
+    const account = {
+        username: username,
+        role: role,
+        status: status
+    };
+
+    if (editIndex === -1) {
+
+        accounts.push(account);
+
+    } else {
+
+        accounts[editIndex] = account;
+
+    }
+
+    saveAccounts();
+
+    closeModal();
+
+    displayAccounts();
+
+};
+
+
+// CHỨC NĂNG XEM TÀI KHOẢN
+
+function viewAccount(index) {
+
+    const account = accounts[index];
+
+    alert(
+        "THÔNG TIN TÀI KHOẢN\n\n" +
+        "Tên đăng nhập: " + account.username + "\n" +
+        "Vai trò: " + account.role + "\n" +
+        "Trạng thái: " + account.status
+    );
+
+}
+
+
+// CHỨC NĂNG SỬA TÀI KHOẢN
+
+function editAccount(index) {
+
+    const account = accounts[index];
+
+    editIndex = index;
+
+    document.getElementById("modalTitle").innerText =
+        "Sửa tài khoản";
+
+    document.getElementById("username").value =
+        account.username;
+
+    document.getElementById("role").value =
+        account.role;
+
+    document.getElementById("status").value =
+        account.status;
+
+    document.getElementById("accountModal").style.display =
+        "flex";
+
+}
+
+
+// TÌM KIẾM TÀI KHOẢN
+
+function searchAccount() {
+
+    const keyword =
+        document.getElementById("searchInput").value.toLowerCase();
+
+    const result = accounts.filter(account =>
+        account.username.toLowerCase().includes(keyword)
+    );
+
+    displayAccounts(result);
+
+}
+
+
+// LƯU DỮ LIỆU TRÊN TRÌNH DUYỆT
+
+function saveAccounts() {
+
+    localStorage.setItem(
+        "hotelAccounts",
+        JSON.stringify(accounts)
+    );
+
+}
+
+
+// HIỂN THỊ AN TOÀN NỘI DUNG NHẬP
+
+function escapeHTML(value) {
+
+    return String(value).replace(/[&<>"']/g, function(char) {
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[char];
+    });
+
+}
+
+
+// KHỞI ĐỘNG
+
+displayAccounts();
+
+</script>
+
+</body>
+</html>
