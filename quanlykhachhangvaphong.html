@@ -1,0 +1,598 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý khách sạn</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f5f5f5;
+    color: #222;
+}
+
+.wrapper {
+    width: 850px;
+    max-width: 96%;
+    min-height: 500px;
+    margin: 50px auto;
+    background: white;
+}
+
+header {
+    height: 45px;
+    padding: 15px 25px 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    padding: 0 25px;
+    height: 35px;
+    border-bottom: 1px solid #eee;
+    gap: 18px;
+}
+
+nav a {
+    font-size: 10px;
+    color: #555;
+    text-decoration: none;
+    padding: 10px 0;
+    cursor: pointer;
+}
+
+nav a.active {
+    color: black;
+    font-weight: bold;
+    border-bottom: 2px solid #333;
+}
+
+.content {
+    padding: 25px 30px;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.page h2 {
+    font-size: 16px;
+    font-weight: normal;
+    margin-bottom: 20px;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.toolbar input {
+    width: 250px;
+    height: 28px;
+    padding: 5px 8px;
+    border: 1px solid #ddd;
+    font-size: 10px;
+}
+
+button {
+    border: none;
+    background: #ddd;
+    padding: 7px 12px;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #bbb;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+}
+
+th {
+    background: #eee;
+    text-align: left;
+    font-weight: normal;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px 8px;
+}
+
+td {
+    height: 30px;
+}
+
+tr:hover {
+    background: #fafafa;
+}
+
+.edit {
+    background: #eee;
+    margin-right: 3px;
+}
+
+.delete {
+    background: #eee;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.form-box {
+    background: white;
+    width: 400px;
+    max-width: 100%;
+    padding: 25px;
+}
+
+.form-box h3 {
+    font-size: 15px;
+    margin-bottom: 20px;
+    font-weight: normal;
+}
+
+.form-box input,
+.form-box select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    font-size: 11px;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.form-buttons button {
+    padding: 8px 20px;
+}
+
+@media(max-width: 600px) {
+    .wrapper {
+        margin: 10px auto;
+    }
+
+    nav {
+        gap: 12px;
+        overflow-x: auto;
+    }
+
+    .content {
+        padding: 20px 12px;
+    }
+
+    .toolbar input {
+        width: 65%;
+    }
+
+    table {
+        min-width: 600px;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <header>
+        <div class="logo">HOTEL</div>
+    </header>
+
+    <nav>
+        <a href="#" class="active"
+           onclick="showPage('room',this); return false;">
+            Phòng
+        </a>
+
+        <a href="#"
+           onclick="showPage('customer',this); return false;">
+            Khách hàng
+        </a>
+    </nav>
+
+    <div class="content">
+
+        <section id="room" class="page active">
+
+            <h2>Quản lý phòng</h2>
+
+            <div class="toolbar">
+                <input type="text"
+                    id="searchRoom"
+                    placeholder="Tìm phòng..."
+                    oninput="renderRooms()">
+
+                <button onclick="openRoomForm()">
+                    + Thêm phòng
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phòng</th>
+                            <th>Loại phòng</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="roomList"></tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <section id="customer" class="page">
+
+            <h2>Khách hàng</h2>
+
+            <div class="toolbar">
+                <input type="text"
+                    id="searchCustomer"
+                    placeholder="Tìm khách hàng..."
+                    oninput="renderCustomers()">
+
+                <button onclick="openCustomerForm()">
+                    + Thêm khách hàng
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Họ tên</th>
+                            <th>Số điện thoại</th>
+                            <th>Loại thẻ</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="customerList"></tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </div>
+</div>
+
+<div class="modal" id="roomModal">
+    <div class="form-box">
+        <h3 id="roomTitle">Thêm phòng</h3>
+
+        <input id="roomName" placeholder="Tên phòng">
+
+        <select id="roomType">
+            <option>Phòng đơn</option>
+            <option>Phòng đôi</option>
+            <option>Phòng VIP</option>
+        </select>
+
+        <select id="roomStatus">
+            <option>Trống</option>
+            <option>Đang sử dụng</option>
+            <option>Bảo trì</option>
+        </select>
+
+        <div class="form-buttons">
+            <button onclick="closeRoomForm()">Hủy</button>
+            <button onclick="saveRoom()">Lưu</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="customerModal">
+    <div class="form-box">
+        <h3 id="customerTitle">Thêm khách hàng</h3>
+
+        <input id="customerName" placeholder="Họ tên">
+
+        <input id="customerPhone"
+               placeholder="Số điện thoại">
+
+        <input id="customerCard"
+               placeholder="Loại thẻ">
+
+        <div class="form-buttons">
+            <button onclick="closeCustomerForm()">Hủy</button>
+            <button onclick="saveCustomer()">Lưu</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+let rooms = [
+    {id: 1, name: "101", type: "Phòng đơn", status: "Trống"},
+    {id: 2, name: "102", type: "Phòng đôi", status: "Đang sử dụng"},
+    {id: 3, name: "103", type: "Phòng VIP", status: "Trống"}
+];
+
+let customers = [
+    {id: 1, name: "Nguyễn Văn An",
+     phone: "0901234567", card: "Bạc"},
+
+    {id: 2, name: "Trần Thị Bình",
+     phone: "0912345678", card: "Vàng"},
+
+    {id: 3, name: "Lê Văn Nam",
+     phone: "0923456789", card: "Đồng"}
+];
+
+let editRoomId = null;
+let editCustomerId = null;
+
+function showPage(id, element) {
+    document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+
+    document.querySelectorAll("nav a").forEach(a => {
+        a.classList.remove("active");
+    });
+
+    element.classList.add("active");
+}
+
+function renderRooms() {
+    let keyword = document.getElementById("searchRoom")
+        .value.toLowerCase();
+
+    let html = "";
+
+    rooms.filter(r =>
+        r.name.toLowerCase().includes(keyword) ||
+        r.type.toLowerCase().includes(keyword)
+    ).forEach(r => {
+        html += `
+            <tr>
+                <td>${r.name}</td>
+                <td>${r.type}</td>
+                <td>${r.status}</td>
+                <td>
+                    <button class="edit"
+                        onclick="editRoom(${r.id})">Sửa</button>
+
+                    <button class="delete"
+                        onclick="deleteRoom(${r.id})">Xóa</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    document.getElementById("roomList").innerHTML = html;
+}
+
+function openRoomForm() {
+    editRoomId = null;
+
+    document.getElementById("roomTitle").innerText = "Thêm phòng";
+    document.getElementById("roomName").value = "";
+    document.getElementById("roomType").value = "Phòng đơn";
+    document.getElementById("roomStatus").value = "Trống";
+
+    document.getElementById("roomModal").classList.add("show");
+}
+
+function closeRoomForm() {
+    document.getElementById("roomModal").classList.remove("show");
+}
+
+function saveRoom() {
+    let name = document.getElementById("roomName").value.trim();
+    let type = document.getElementById("roomType").value;
+    let status = document.getElementById("roomStatus").value;
+
+    if (!name) {
+        alert("Vui lòng nhập tên phòng!");
+        return;
+    }
+
+    let duplicate = rooms.some(r =>
+        r.name.toLowerCase() === name.toLowerCase() &&
+        r.id !== editRoomId
+    );
+
+    if (duplicate) {
+        alert("Tên phòng đã tồn tại!");
+        return;
+    }
+
+    if (editRoomId !== null) {
+        let room = rooms.find(r => r.id === editRoomId);
+        room.name = name;
+        room.type = type;
+        room.status = status;
+    } else {
+        rooms.push({
+            id: Date.now(),
+            name,
+            type,
+            status
+        });
+    }
+
+    closeRoomForm();
+    renderRooms();
+}
+
+function editRoom(id) {
+    let r = rooms.find(r => r.id === id);
+
+    editRoomId = id;
+
+    document.getElementById("roomTitle").innerText = "Sửa phòng";
+    document.getElementById("roomName").value = r.name;
+    document.getElementById("roomType").value = r.type;
+    document.getElementById("roomStatus").value = r.status;
+
+    document.getElementById("roomModal").classList.add("show");
+}
+
+function deleteRoom(id) {
+    if (confirm("Bạn có muốn xóa phòng này không?")) {
+        rooms = rooms.filter(r => r.id !== id);
+        renderRooms();
+    }
+}
+
+function renderCustomers() {
+    let keyword = document.getElementById("searchCustomer")
+        .value.toLowerCase();
+
+    let html = "";
+
+    customers.filter(c =>
+        c.name.toLowerCase().includes(keyword) ||
+        c.phone.includes(keyword)
+    ).forEach(c => {
+        html += `
+            <tr>
+                <td>${c.name}</td>
+                <td>${c.phone}</td>
+                <td>${c.card}</td>
+                <td>
+                    <button class="edit"
+                        onclick="editCustomer(${c.id})">Sửa</button>
+
+                    <button class="delete"
+                        onclick="deleteCustomer(${c.id})">Xóa</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    document.getElementById("customerList").innerHTML = html;
+}
+
+function openCustomerForm() {
+    editCustomerId = null;
+
+    document.getElementById("customerTitle").innerText =
+        "Thêm khách hàng";
+
+    document.getElementById("customerName").value = "";
+    document.getElementById("customerPhone").value = "";
+    document.getElementById("customerCard").value = "";
+
+    document.getElementById("customerModal").classList.add("show");
+}
+
+function closeCustomerForm() {
+    document.getElementById("customerModal").classList.remove("show");
+}
+
+function saveCustomer() {
+    let name = document.getElementById("customerName").value.trim();
+    let phone = document.getElementById("customerPhone").value.trim();
+    let card = document.getElementById("customerCard").value.trim();
+
+    if (!name || !phone || !card) {
+        alert("Vui lòng nhập đầy đủ thông tin!");
+        return;
+    }
+
+    if (!/^[0-9]{9,11}$/.test(phone)) {
+        alert("Số điện thoại không hợp lệ!");
+        return;
+    }
+
+    if (editCustomerId !== null) {
+        let c = customers.find(c => c.id === editCustomerId);
+        c.name = name;
+        c.phone = phone;
+        c.card = card;
+    } else {
+        customers.push({
+            id: Date.now(),
+            name,
+            phone,
+            card
+        });
+    }
+
+    closeCustomerForm();
+    renderCustomers();
+}
+
+function editCustomer(id) {
+    let c = customers.find(c => c.id === id);
+
+    editCustomerId = id;
+
+    document.getElementById("customerTitle").innerText =
+        "Sửa khách hàng";
+
+    document.getElementById("customerName").value = c.name;
+    document.getElementById("customerPhone").value = c.phone;
+    document.getElementById("customerCard").value = c.card;
+
+    document.getElementById("customerModal").classList.add("show");
+}
+
+function deleteCustomer(id) {
+    if (confirm("Bạn có muốn xóa khách hàng này không?")) {
+        customers = customers.filter(c => c.id !== id);
+        renderCustomers();
+    }
+}
+
+renderRooms();
+renderCustomers();
+
+</script>
+
+</body>
+</html>
