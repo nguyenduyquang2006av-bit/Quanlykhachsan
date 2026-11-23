@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý khách sạn</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <h2>HOTEL MANAGEMENT</h2>
+
+        <div class="user">
+            <span>Xin chào, Admin</span>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <nav class="navbar">
+        <a href="#" onclick="showPage('customer')">
+            Quản lý khách hàng
+        </a>
+
+        <a href="#" onclick="showPage('room')">
+            Quản lý phòng
+        </a>
+    </nav>
+
+    <main class="container">
+
+        <section id="customer" class="page">
+
+            <h2>Quản lý khách hàng</h2>
+
+            <div class="toolbar">
+                <input
+                    type="text"
+                    id="searchCustomer"
+                    placeholder="Nhập tên khách hàng..."
+                    oninput="renderCustomers()"
+                >
+
+                <button onclick="openCustomerForm()">
+                    + Thêm khách hàng
+                </button>
+            </div>
+
+            <div class="table-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã khách hàng</th>
+                            <th>Họ tên</th>
+                            <th>Số điện thoại</th>
+                            <th>Email</th>
+                            <th>Địa chỉ</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="customerList"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="room" class="page hidden">
+
+            <h2>Quản lý phòng</h2>
+
+            <div class="toolbar">
+                <input
+                    type="text"
+                    id="searchRoom"
+                    placeholder="Nhập mã hoặc tên phòng..."
+                    oninput="renderRooms()"
+                >
+
+                <button onclick="openRoomForm()">
+                    + Thêm phòng
+                </button>
+            </div>
+
+            <div class="table-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã phòng</th>
+                            <th>Tên phòng</th>
+                            <th>Loại phòng</th>
+                            <th>Giá phòng</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="roomList"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="modal hidden" id="customerModal">
+        <div class="modal-content">
+            <h3 id="customerFormTitle">Thêm khách hàng</h3>
+
+            <input id="customerName" placeholder="Họ và tên">
+            <input id="customerPhone" placeholder="Số điện thoại">
+            <input id="customerEmail" placeholder="Email">
+            <input id="customerAddress" placeholder="Địa chỉ">
+
+            <div class="modal-buttons">
+                <button onclick="saveCustomer()">Lưu</button>
+                <button class="cancel" onclick="closeCustomerForm()">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal hidden" id="roomModal">
+        <div class="modal-content">
+            <h3 id="roomFormTitle">Thêm phòng</h3>
+
+            <input id="roomName" placeholder="Tên phòng">
+
+            <select id="roomType">
+                <option value="Phòng đơn">Phòng đơn</option>
+                <option value="Phòng đôi">Phòng đôi</option>
+                <option value="Phòng VIP">Phòng VIP</option>
+            </select>
+
+            <input
+                id="roomPrice"
+                type="number"
+                min="0"
+                placeholder="Giá phòng"
+            >
+
+            <select id="roomStatus">
+                <option value="Trống">Trống</option>
+                <option value="Đang sử dụng">Đang sử dụng</option>
+                <option value="Bảo trì">Bảo trì</option>
+            </select>
+
+            <div class="modal-buttons">
+                <button onclick="saveRoom()">Lưu</button>
+                <button class="cancel" onclick="closeRoomForm()">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
